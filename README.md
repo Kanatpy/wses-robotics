@@ -67,7 +67,7 @@ while True:
     time.sleep_ms(20)
 
     </code></pre>
-    </td>
+    
   </tr>
 </table>
 
@@ -138,6 +138,5 @@ while True:
 
     time.sleep_ms(20)
 </code></pre>
-        </td>
   </tr>
 </table>
