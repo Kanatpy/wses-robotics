@@ -3,13 +3,13 @@
 <table>
   <tr>
     <td width="50%" valign="top">
-      <h3>The Circuit</h3>
-      <img src="week3/servo_circuit_image.png" alt="Servo Control" style="width:100%;">
+      <strong>The Circuit</strong><br>
+      <img src="week3/switch_circuit_image.png" alt="Using a Switch" style="width:100%;">
     </td>
     <td width="50%" valign="top">
-      <h3>The Python Code</h3>
+      <strong>The Python Code</strong>
 
-```python
+<pre><code>
 from machine import Pin, PWM
 import time
 
@@ -26,7 +26,6 @@ MAX_ANGLE = 180
 STEP = 5
 angle = 90
 
-
 def angle_to_duty_u16(deg):
     # Map 0..180 deg to 500..2500 us pulse width at 50 Hz.
     min_us = 500
@@ -34,10 +33,8 @@ def angle_to_duty_u16(deg):
     pulse_us = min_us + (max_us - min_us) * deg // 180
     return int(pulse_us * 65535 / 20000)
 
-
 def set_angle(deg):
     servo.duty_u16(angle_to_duty_u16(deg))
-
 
 set_angle(angle)
 
@@ -69,10 +66,8 @@ while True:
 
     time.sleep_ms(20)
 
-
-
-```
-</td>
+    </code></pre>
+    </td>
   </tr>
 </table>
 
@@ -80,14 +75,14 @@ while True:
 ## Servo Control
 <table>
   <tr>
-    <td width="50%" valign="top">
-      <h3>The Circuit</h3>
-      <img src="week3/switch_circuit_image.png" alt="Using a Switch" style="width:100%;">
+    <td width="50%" valign="top">      
+      <strong>The Circuit</strong>
+      <img src="week3/servo_circuit_image.png" alt="Servo Control" style="width:100%;">      
     </td>
     <td width="50%" valign="top">
-      <h3>The Python Code</h3>
+      <strong>The Python Code</strong>
 
-```python
+<pre><code>
 from machine import Pin, PWM
 import time
 
@@ -103,8 +98,7 @@ MIN_ANGLE = 0
 MAX_ANGLE = 180
 STEP = 5
 angle = 90
-
-
+  
 def angle_to_duty_u16(deg):
     # Map 0..180 deg to 500..2500 us pulse width at 50 Hz.
     min_us = 500
@@ -112,11 +106,8 @@ def angle_to_duty_u16(deg):
     pulse_us = min_us + (max_us - min_us) * deg // 180
     return int(pulse_us * 65535 / 20000)
 
-
 def set_angle(deg):
     servo.duty_u16(angle_to_duty_u16(deg))
-
-
 set_angle(angle)
 
 while True:
@@ -146,7 +137,7 @@ while True:
         set_angle(angle)
 
     time.sleep_ms(20)
-```
-</td>
+</code></pre>
+        </td>
   </tr>
 </table>
