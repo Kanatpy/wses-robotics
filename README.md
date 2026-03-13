@@ -4,7 +4,7 @@
   <tr>
     <td width="50%" valign="top">
       <h3>The Circuit</h3>
-      <img src="week3/switch_circuit_image.png" alt="Using a Switch" style="width:100%;">
+      <img src="week3/servo_circuit_image.png" alt="Servo Control" style="width:100%;">
     </td>
     <td width="50%" valign="top">
       <h3>The Python Code</h3>
@@ -68,6 +68,9 @@ while True:
         set_angle(angle)
 
     time.sleep_ms(20)
+
+
+
 ```
 </td>
   </tr>
