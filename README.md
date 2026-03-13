@@ -1,4 +1,3 @@
-<link rel="icon" type="image/png" href="img/favicon_robot.png">
 # wses-robotics
 ## Adding Switch
 <table>
