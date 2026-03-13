@@ -1,4 +1,4 @@
-<a href="[Pico-web-serial](https://cyrils.github.io/pico-web-serial/serial.html)" target="_blank">Click here to Pico Web Programmer open in a new tab</a>
+<a href="https://cyrils.github.io/pico-web-serial/serial.html" target="_blank">Click here for the Pico Web Programmer to open in a new tab</a>
 
 # Adding Switch
 <table>
