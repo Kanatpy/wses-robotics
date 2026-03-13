@@ -1,3 +1,4 @@
+<link rel="icon" type="image/png" href="img/favicon_robot.png">
 # wses-robotics
 ## Adding Switch
 <table>
@@ -140,3 +141,9 @@ while True:
 </code></pre>
   </tr>
 </table>
+
+
+<a href="https://www.flaticon.com/free-icons/robot" title="robot icons">Robot icons created by kliwir art - Flaticon</a>
+
+
+
