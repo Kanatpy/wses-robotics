@@ -1,40 +1,25 @@
-<a href="https://cyrils.github.io/pico-web-serial/serial.html" target="_blank">Click here for the Pico Web Programmer to open in a new tab</a>
+<a href="https://python.microbit.org/v/3" target="_blank">Click here for the micro:bit Web Programmer to open in a new tab</a>
 
 # Adding Switch
 <table>
   <tr>
     <td width="50%" valign="top">
       <strong>The Circuit</strong><br>
-      <img src="week3/switch_circuit_image.png" alt="Using a Switch" style="width:100%;">
+      <img src="week4/micropbit_recroding.gif" alt="Using a micro:bit" style="width:100%;">
+
     </td>
     <td width="50%" valign="top">
       <strong>The Python Code</strong>
       <pre><code>
-from machine import Pin
-import time
-button = Pin(16, Pin.IN, Pin.PULL_UP)
-led_red = Pin(15, Pin.OUT)
-# Turn off all LEDs first
-led_red.off()
-    
-led_state = 1
+# Imports go at the top
+from microbit import *
+
+
+# Code in a 'while True:' loop repeats forever
 while True:
-    # Read the value of button
-    # 1: Button is not pressed
-    # 0: Button is pressed
-    button_state = button.value()
-    
-    if button_state == 0:  # Button pressed
-        if led_state == 1: # LED was already ON
-            led_red.off() # Turn OFF LED
-            led_state = 0 
-        else: # LED was already OFF
-            led_red.on() # Turn ON LED
-            led_state = 1
-        
-        # Wait until button is released to avoid repeated toggles
-        while button.value() == 0:
-            time.sleep(0.01)
+    display.show(Image.HEART)
+    sleep(1000)
+    display.scroll('Hello')
   
       </code></pre>
     </td>
