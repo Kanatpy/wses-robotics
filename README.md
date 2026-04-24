@@ -41,15 +41,45 @@
     <td width="50%" valign="top">
       <strong>The Python Code</strong>
       <pre><code>
-        # Imports go at the top
-        from microbit import *
+      from microbit import *
 
+      # Initial position: Center
+      x = 2
+      y = 2
 
-        # Code in a 'while True:' loop repeats forever
-        while True:
-            display.show(Image.HEART)
-            sleep(1000)
-            display.scroll('Hello')
+      while True:
+          display.clear()
+          display.set_pixel(x, y, 9)
+          
+          # Button A: Move Upper-Left
+          if button_a.was_pressed():
+              # Step 1: Move X left
+              x = x - 1
+              # Step 2: Check if we went off the left edge
+              if x < 0:
+                  x = 4
+                  
+              # Step 3: Move Y up
+              y = y - 1
+              # Step 4: Check if we went off the top edge
+              if y < 0:
+                  y = 4
+                  
+          # Button B: Move Lower-Right
+          if button_b.was_pressed():
+              # Step 1: Move X right
+              x = x + 1
+              # Step 2: Check if we went off the right edge
+              if x > 4:
+                  x = 0
+                  
+              # Step 3: Move Y down
+              y = y + 1
+              # Step 4: Check if we went off the bottom edge
+              if y > 4:
+                  y = 0
+          
+          sleep(10)
           
       </code></pre>
     </td>
