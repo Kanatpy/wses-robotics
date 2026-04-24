@@ -6,22 +6,21 @@
     <td width="50%" valign="top">
       <strong>The Circuit</strong><br>
       <img src="week4/micropbit_recroding.gif" alt="Using a micro:bit" style="width:100%;">
-
     </td>
     <td width="50%" valign="top">
       <strong>The Python Code</strong>
       <pre><code>
-# Imports go at the top
-from microbit import *
+        # Imports go at the top
+        from microbit import *
 
 
-# Code in a 'while True:' loop repeats forever
-while True:
-    display.show(Image.HEART)
-    sleep(1000)
-    display.scroll('Hello')
-  
-      </code></pre>
+        # Code in a 'while True:' loop repeats forever
+        while True:
+            display.show(Image.HEART)
+            sleep(1000)
+            display.scroll('Hello')
+          
+              </code></pre>
     </td>
   </tr>
 </table>
