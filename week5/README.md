@@ -1,4 +1,3 @@
-
 <!-- Styles for the copy button -->
 <style>
   .code-container {
@@ -33,65 +32,6 @@
 <p></p>
 <a href="https://makecode.microbit.org/" target="_blank">Click here if you want to program using Blocks!</a>
 
-# Hello World!
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>Web Editor</strong><br>
-      <img src="week4/micropbit_recording_heart.gif" alt="Using a micro:bit" style="width:100%;">
-    </td>
-    <td width="50%" valign="top">
-      <strong>The Python Code</strong>
-      <div class="code-container">
-        <button class="copy-btn" onclick="copyCode('code1', this)">Copy</button>
-        <pre><code id="code1">from microbit import *
-
-while True:
-    display.show(Image.HEART)
-    sleep(1000)
-    display.scroll('Hello')</code></pre>
-      </div>
-    </td>
-  </tr>
-</table>
-
-# Using Switches
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>Web Editor</strong><br>
-      <img src="week4/micropbit_recording_switch.gif" alt="Using a micro:bit" style="width:100%;">
-    </td>
-    <td width="50%" valign="top">
-      <strong>The Python Code</strong>
-      <div class="code-container">
-        <button class="copy-btn" onclick="copyCode('code2', this)">Copy</button>
-        <pre><code id="code2">from microbit import *
-
-x = 2
-y = 2
-
-while True:
-    display.clear()
-    display.set_pixel(x, y, 9)
-    
-    if button_a.was_pressed():
-        x = x - 1
-        if x < 0: x = 4
-        y = y - 1
-        if y < 0: y = 4
-            
-    if button_b.was_pressed():
-        x = x + 1
-        if x > 4: x = 0
-        y = y + 1
-        if y > 4: y = 0
-    
-    sleep(10)</code></pre>
-      </div>
-    </td>
-  </tr>
-</table>
 
 # Accelerometer!
 <table>
@@ -100,39 +40,48 @@ while True:
       <strong>The Python Code</strong>
       <div class="code-container">
         <button class="copy-btn" onclick="copyCode('code3', this)">Copy</button>
-        <pre><code id="code3">from microbit import *
+        <pre><code id="code3">
+          
+          from microbit import *
 
-SENSITIVITY = 200
-INTERVAL = 100
-WINDOW_SIZE = 10
-display_history = [0, 0, 0, 0, 0]
-avg_buffer = []
+
+# Ensure the pull-down is set so the pin doesn't 'float'
+pin0.write_analog(0)
+pin0.set_pull(pin0.PULL_DOWN)
+display.clear()
 
 while True:
-    raw_reading = accelerometer.get_y()
-    avg_buffer.append(raw_reading)
-    if len(avg_buffer) > WINDOW_SIZE:
-        avg_buffer.pop(0)
+    if button_b.is_pressed():        
+        count = 0
+        # Ramp up from 0 to 1023
+        for speed in range(0, 1024, 41): 
+            # If user lets go during the ramp, jump to the 'else' (stop)
+            if not button_a.is_pressed():
+                break
+            
+            pin0.write_analog(speed)
+            
+            # LED Progress Bar Logic
+            y = count // 5
+            x = count % 5
+            display.set_pixel(x, y, 9)
+            
+            count += 1
+            sleep(40) 
+        
+        # Hold full speed as long as button is held
+        while button_a.is_pressed():
+            pin0.write_analog(1023)
+            
+    else:        
+        # Explicitly write 0 to keep the motor off
+        pin0.write_analog(0)
+        display.clear()
     
-    current_avg = sum(avg_buffer) / len(avg_buffer)
-    difference = raw_reading - current_avg
-    val = int(difference / SENSITIVITY)
-    magnitude = min(max(val, -2), 2)
+    # Small sleep to keep the processor from running too hot
+    sleep(10)
     
-    display_history.pop(0)
-    display_history.append(magnitude)
-    
-    display.clear()
-    for x in range(5):
-        offset = display_history[x]
-        display.set_pixel(x, 2, 5)
-        if offset > 0:
-            for y in range(2 - offset, 2):
-                display.set_pixel(x, y, 9)
-        elif offset < 0:
-            for y in range(3, 3 - offset):
-                display.set_pixel(x, y, 9)
-    sleep(INTERVAL)</code></pre>
+    </code></pre>
       </div>
     </td>
   </tr>
