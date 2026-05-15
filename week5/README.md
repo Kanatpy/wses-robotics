@@ -32,8 +32,12 @@
 <p></p>
 <a href="https://makecode.microbit.org/" target="_blank">Click here if you want to program using Blocks!</a>
 
+# Circuit Diagram
+<a href="https://app.cirkitdesigner.com/project/d3682d71-2df9-41ce-a4b0-2a48508eead1" target="_blank"> Link to cirkidesigner!</a>
+<img src="week5/circuit_image.png" alt="Circuit Diagram" style="width:100%;">
 
-# Accelerometer!
+
+# Motor Control!
 <table>
   <tr>    
     <td width="50%" valign="top">
@@ -42,10 +46,9 @@
         <button class="copy-btn" onclick="copyCode('code3', this)">Copy</button>
         <pre><code id="code3">
           
-          from microbit import *
+from microbit import *
 
-
-# Ensure the pull-down is set so the pin doesn't 'float'
+# Ensure the pull-down is set so the pin doesn't output anything
 pin0.write_analog(0)
 pin0.set_pull(pin0.PULL_DOWN)
 display.clear()
