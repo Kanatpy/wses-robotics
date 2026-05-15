@@ -32,6 +32,10 @@
 <p></p>
 <a href="https://makecode.microbit.org/" target="_blank">Click here if you want to program using Blocks!</a>
 
+# Circuit Diagram
+<a href="https://app.cirkitdesigner.com/project/d3682d71-2df9-41ce-a4b0-2a48508eead1" target="_blank"> Link to cirkidesigner!</a>
+
+
 
 # Motor Control!
 <table>
