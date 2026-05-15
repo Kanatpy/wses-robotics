@@ -34,7 +34,7 @@
 
 # Circuit Diagram
 <a href="https://app.cirkitdesigner.com/project/d3682d71-2df9-41ce-a4b0-2a48508eead1" target="_blank"> Link to cirkidesigner!</a>
-
+<img src="week5/circuit_image.png" alt="Circuit Diagram" style="width:100%;">
 
 
 # Motor Control!
