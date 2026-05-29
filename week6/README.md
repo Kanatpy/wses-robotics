@@ -33,11 +33,11 @@
 <a href="https://makecode.microbit.org/" target="_blank">Click here if you want to program using Blocks!</a>
 
 # Circuit Diagram
-<a href="https://app.cirkitdesigner.com/project/d3682d71-2df9-41ce-a4b0-2a48508eead1" target="_blank"> Link to cirkidesigner!</a>
-<img src="week5/circuit_image.png" alt="Circuit Diagram" style="width:100%;">
+<a href="https://app.cirkitdesigner.com/project/0213eed6-16af-4f01-b41b-4eb8e486daf5" target="_blank"> Link to cirkidesigner!</a>
+<img src="week6/circuit_image.png" alt="Circuit Diagram" style="width:100%;">
 
 
-# Motor Control!
+# Remote Control!
 <table>
   <tr>    
     <td width="50%" valign="top">
@@ -47,48 +47,119 @@
         <pre><code id="code3">
           
 from microbit import *
+import radio
 
-# Ensure the pull-down is set so the pin doesn't output anything
-pin0.write_analog(0)
-pin0.set_pull(pin0.PULL_DOWN)
-display.clear()
+# Turn on the radio and set a channel (must match the car)**
+channel_no = 7
+radio.on()
+radio.config(channel=channel_no)
+
+# Default values
+steering = "center"
 
 while True:
-    if button_b.is_pressed():        
-        count = 0
-        # Ramp up from 0 to 1023
-        for speed in range(0, 1024, 41): 
-            # If user lets go during the ramp, jump to the 'else' (stop)
-            if not button_a.is_pressed():
-                break
-            
-            pin0.write_analog(speed)
-            
-            # LED Progress Bar Logic
-            y = count // 5
-            x = count % 5
-            display.set_pixel(x, y, 9)
-            
-            count += 1
-            sleep(40) 
+    # 1. Handle Steering Input (Buttons)
+    if button_a.is_pressed() and button_b.is_pressed():
+        steering = "center"
+    elif button_a.is_pressed():
+        steering = "left"
+    elif button_b.is_pressed():
+        steering = "right"
         
-        # Hold full speed as long as button is held
-        while button_a.is_pressed():
-            pin0.write_analog(1023)
-            
-    else:        
-        # Explicitly write 0 to keep the motor off
-        pin0.write_analog(0)
-        display.clear()
+    # 2. Handle Speed Input (Tilt Forward/Backward)
+    # y-axis gives negative values when tilted forward, positive when backward
+    tilt_y = accelerometer.get_y()
     
-    # Small sleep to keep the processor from running too hot
-    sleep(10)
+    # Map the tilt to a speed scale (0 to 100)
+    # We only care about tilting forward to go forward for this simple code
+    if tilt_y < -200:
+        # Convert negative tilt into a positive speed value (max ~100)
+        speed = min(100, abs(tilt_y) // 10)
+    else:
+        speed = 0 # Stop if level or tilted backward
+        
+    # 3. Send the data as a string (e.g., "left,50")
+    command = "{},{}".format(steering, speed)
+    radio.send(command)
+    
+    # Brief pause to keep the radio clear
+    sleep(50)
     
     </code></pre>
       </div>
     </td>
   </tr>
 </table>
+
+
+# Car Control!
+<table>
+  <tr>    
+    <td width="50%" valign="top">
+      <strong>The Python Code</strong>
+      <div class="code-container">
+        <button class="copy-btn" onclick="copyCode('code3', this)">Copy</button>
+        <pre><code id="code3">
+          
+from microbit import *
+import radio
+
+# Turn on the radio and match the channel
+channel_no = 7
+radio.on()
+radio.config(channel=channel_no)
+
+# Set initial PWM periods
+# Servos standardly require a 20ms (20000 microseconds) period
+pin1.set_analog_period_microseconds(20000) 
+
+# Helper function to map servo angles (0 to 180 degrees) 
+# into MicroPython's 0-1023 duty cycle
+def set_servo_angle(pin, angle):
+    # Standard servo duty cycle ranges roughly from 50 (0°) to 115 (180°)
+    duty = int(50 + (angle / 180) * 65)
+    pin.write_analog(duty)
+
+# Initialize car states
+set_servo_angle(pin1, 90) # Center the steering
+pin0.write_analog(0)      # Stop the motor
+
+while True:
+    # Check for incoming radio messages
+    message = radio.receive()
+    
+    if message:
+        try:
+            # Split the incoming string "steering,speed"
+            steering, speed_str = message.split(",")
+            speed_pct = int(speed_str)
+            
+            # 1. Control the Servo (Pin 1)
+            if steering == "left":
+                set_servo_angle(pin1, 45)  # Turn Left
+            elif steering == "right":
+                set_servo_angle(pin1, 135) # Turn Right
+            else:
+                set_servo_angle(pin1, 90)  # Straight
+                
+            # 2. Control the DC Motor Speed via PWM (Pin 0)
+            # Map 0-100% speed to MicroPython's 0-1023 analog range
+            pwm_value = int((speed_pct / 100) * 1023)
+            pin0.write_analog(pwm_value)
+            
+        except ValueError:
+            # Ignore corrupted or incomplete radio packets
+            pass
+            
+    sleep(20)
+    
+    </code></pre>
+      </div>
+    </td>
+  </tr>
+</table>
+
+
 
 <!-- JavaScript for the copy functionality -->
 <script>
