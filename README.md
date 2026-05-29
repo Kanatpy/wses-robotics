@@ -49,40 +49,50 @@
 from microbit import *
 import radio
 
-# Turn on the radio and set a channel (must match the car)**
-channel_no = 7
+# Turn on the radio and set a channel
 radio.on()
-radio.config(channel=channel_no)
+radio.config(channel=7)
 
 # Default values
 steering = "center"
 
 while True:
-    # 1. Handle Steering Input (Buttons)
+    # 1. Handle Steering Input & Set LED Arrows
     if button_a.is_pressed() and button_b.is_pressed():
         steering = "center"
+        display.show(Image.ARROW_N) # North arrow for straight ahead
     elif button_a.is_pressed():
         steering = "left"
+        display.show(Image.ARROW_W) # West arrow for left
     elif button_b.is_pressed():
         steering = "right"
+        display.show(Image.ARROW_E) # East arrow for right
+    else:
+        # If no buttons are pressed, clear the steering arrow 
+        # so we can show the speed indicator instead
+        display.clear()
         
     # 2. Handle Speed Input (Tilt Forward/Backward)
-    # y-axis gives negative values when tilted forward, positive when backward
     tilt_y = accelerometer.get_y()
     
-    # Map the tilt to a speed scale (0 to 100)
-    # We only care about tilting forward to go forward for this simple code
     if tilt_y < -200:
-        # Convert negative tilt into a positive speed value (max ~100)
         speed = min(100, abs(tilt_y) // 10)
     else:
-        speed = 0 # Stop if level or tilted backward
+        speed = 0 
         
-    # 3. Send the data as a string (e.g., "left,50")
+    # 3. If driving straight, show speed as a "progress bar" on the LEDs
+    if steering == "center":
+        # Light up rows based on speed percentage
+        display.clear()
+        rows_to_light = min(5, speed // 20) # 0 to 5 rows
+        for y in range(5 - rows_to_light, 5):
+            for x in range(5):
+                display.set_pixel(x, y, 9) # Max brightness
+                
+    # 4. Send the data
     command = "{},{}".format(steering, speed)
     radio.send(command)
     
-    # Brief pause to keep the radio clear
     sleep(50)
     
     </code></pre>
@@ -105,51 +115,50 @@ from microbit import *
 import radio
 
 # Turn on the radio and match the channel
-channel_no = 7
 radio.on()
-radio.config(channel=channel_no)
+radio.config(channel=7)
 
-# Set initial PWM periods
-# Servos standardly require a 20ms (20000 microseconds) period
+# Set initial PWM periods for Servo
 pin1.set_analog_period_microseconds(20000) 
 
-# Helper function to map servo angles (0 to 180 degrees) 
-# into MicroPython's 0-1023 duty cycle
 def set_servo_angle(pin, angle):
-    # Standard servo duty cycle ranges roughly from 50 (0°) to 115 (180°)
     duty = int(50 + (angle / 180) * 65)
     pin.write_analog(duty)
 
 # Initialize car states
-set_servo_angle(pin1, 90) # Center the steering
-pin0.write_analog(0)      # Stop the motor
+set_servo_angle(pin1, 90) 
+pin0.write_analog(0)      
+display.clear()
 
 while True:
-    # Check for incoming radio messages
     message = radio.receive()
     
     if message:
         try:
-            # Split the incoming string "steering,speed"
+            # Split the incoming string
             steering, speed_str = message.split(",")
             speed_pct = int(speed_str)
             
+            # --- LED INDICATOR (Flash center pixel to show data receipt) ---
+            display.set_pixel(2, 2, 9)
+            
             # 1. Control the Servo (Pin 1)
             if steering == "left":
-                set_servo_angle(pin1, 45)  # Turn Left
+                set_servo_angle(pin1, 45)  
             elif steering == "right":
-                set_servo_angle(pin1, 135) # Turn Right
+                set_servo_angle(pin1, 135) 
             else:
-                set_servo_angle(pin1, 90)  # Straight
+                set_servo_angle(pin1, 90)  
                 
-            # 2. Control the DC Motor Speed via PWM (Pin 0)
-            # Map 0-100% speed to MicroPython's 0-1023 analog range
+            # 2. Control the DC Motor Speed (Pin 0)
             pwm_value = int((speed_pct / 100) * 1023)
             pin0.write_analog(pwm_value)
             
         except ValueError:
-            # Ignore corrupted or incomplete radio packets
             pass
+    else:
+        # If no radio message was received in this loop, turn off the indicator
+        display.set_pixel(2, 2, 0)
             
     sleep(20)
     
