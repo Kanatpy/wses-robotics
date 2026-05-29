@@ -37,7 +37,7 @@
 <img src="week5/circuit_image.png" alt="Circuit Diagram" style="width:100%;">
 
 
-# Motor Control!
+# Remote Control!
 <table>
   <tr>    
     <td width="50%" valign="top">
@@ -47,42 +47,44 @@
         <pre><code id="code3">
           
 from microbit import *
+import radio
 
-# Ensure the pull-down is set so the pin doesn't output anything
-pin0.write_analog(0)
-pin0.set_pull(pin0.PULL_DOWN)
-display.clear()
+
+   # Turn on the radio and set a channel (must match the car)
+channel_no = 7
+radio.on()
+radio.config(channel=channel_no)
+
+     # Default values
+steering = "center"
 
 while True:
-    if button_b.is_pressed():        
-        count = 0
-        # Ramp up from 0 to 1023
-        for speed in range(0, 1024, 41): 
-            # If user lets go during the ramp, jump to the 'else' (stop)
-            if not button_a.is_pressed():
-                break
-            
-            pin0.write_analog(speed)
-            
-            # LED Progress Bar Logic
-            y = count // 5
-            x = count % 5
-            display.set_pixel(x, y, 9)
-            
-            count += 1
-            sleep(40) 
+    # 1. Handle Steering Input (Buttons)
+    if button_a.is_pressed() and button_b.is_pressed():
+        steering = "center"
+    elif button_a.is_pressed():
+        steering = "left"
+    elif button_b.is_pressed():
+        steering = "right"
         
-        # Hold full speed as long as button is held
-        while button_a.is_pressed():
-            pin0.write_analog(1023)
-            
-    else:        
-        # Explicitly write 0 to keep the motor off
-        pin0.write_analog(0)
-        display.clear()
+    # 2. Handle Speed Input (Tilt Forward/Backward)
+    # y-axis gives negative values when tilted forward, positive when backward
+    tilt_y = accelerometer.get_y()
     
-    # Small sleep to keep the processor from running too hot
-    sleep(10)
+    # Map the tilt to a speed scale (0 to 100)
+    # We only care about tilting forward to go forward for this simple code
+    if tilt_y < -200:
+        # Convert negative tilt into a positive speed value (max ~100)
+        speed = min(100, abs(tilt_y) // 10)
+    else:
+        speed = 0 # Stop if level or tilted backward
+        
+    # 3. Send the data as a string (e.g., "left,50")
+    command = "{},{}".format(steering, speed)
+    radio.send(command)
+    
+    # Brief pause to keep the radio clear
+    sleep(50)
     
     </code></pre>
       </div>
