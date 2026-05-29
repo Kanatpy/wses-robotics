@@ -49,13 +49,12 @@
 from microbit import *
 import radio
 
-
-   # Turn on the radio and set a channel (must match the car)
+# Turn on the radio and set a channel (must match the car)**
 channel_no = 7
 radio.on()
 radio.config(channel=channel_no)
 
-     # Default values
+# Default values
 steering = "center"
 
 while True:
@@ -91,6 +90,76 @@ while True:
     </td>
   </tr>
 </table>
+
+
+# Car Control!
+<table>
+  <tr>    
+    <td width="50%" valign="top">
+      <strong>The Python Code</strong>
+      <div class="code-container">
+        <button class="copy-btn" onclick="copyCode('code3', this)">Copy</button>
+        <pre><code id="code3">
+          
+from microbit import *
+import radio
+
+# Turn on the radio and match the channel
+channel_no = 7
+radio.on()
+radio.config(channel=channel_no)
+
+# Set initial PWM periods
+# Servos standardly require a 20ms (20000 microseconds) period
+pin1.set_analog_period_microseconds(20000) 
+
+# Helper function to map servo angles (0 to 180 degrees) 
+# into MicroPython's 0-1023 duty cycle
+def set_servo_angle(pin, angle):
+    # Standard servo duty cycle ranges roughly from 50 (0°) to 115 (180°)
+    duty = int(50 + (angle / 180) * 65)
+    pin.write_analog(duty)
+
+# Initialize car states
+set_servo_angle(pin1, 90) # Center the steering
+pin0.write_analog(0)      # Stop the motor
+
+while True:
+    # Check for incoming radio messages
+    message = radio.receive()
+    
+    if message:
+        try:
+            # Split the incoming string "steering,speed"
+            steering, speed_str = message.split(",")
+            speed_pct = int(speed_str)
+            
+            # 1. Control the Servo (Pin 1)
+            if steering == "left":
+                set_servo_angle(pin1, 45)  # Turn Left
+            elif steering == "right":
+                set_servo_angle(pin1, 135) # Turn Right
+            else:
+                set_servo_angle(pin1, 90)  # Straight
+                
+            # 2. Control the DC Motor Speed via PWM (Pin 0)
+            # Map 0-100% speed to MicroPython's 0-1023 analog range
+            pwm_value = int((speed_pct / 100) * 1023)
+            pin0.write_analog(pwm_value)
+            
+        except ValueError:
+            # Ignore corrupted or incomplete radio packets
+            pass
+            
+    sleep(20)
+    
+    </code></pre>
+      </div>
+    </td>
+  </tr>
+</table>
+
+
 
 <!-- JavaScript for the copy functionality -->
 <script>
