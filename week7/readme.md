@@ -130,34 +130,49 @@ set_servo_angle(pin1, 90)
 pin0.write_analog(0)      
 display.clear()
 
+# Track the blink state of the center pixel (9 = on, 0 = off)
+blink_state = 0
+
 while True:
     message = radio.receive()
     
     if message:
         try:
-            # Split the incoming string
+            # Split the incoming string (e.g., "left,50")
             steering, speed_str = message.split(",")
             speed_pct = int(speed_str)
             
-            # --- LED INDICATOR (Flash center pixel to show data receipt) ---
-            display.set_pixel(2, 2, 9)
+            # Wipe the display clean so we can draw the fresh state
+            display.clear()
             
-            # 1. Control the Servo (Pin 1)
+            # --- 1. HEARTBEAT BLINK INDICATOR ---
+            # Toggle the pixel value between 0 and 9 each time a packet arrives
+            if blink_state == 0:
+                blink_state = 9
+            else:
+                blink_state = 0
+            display.set_pixel(2, 2, blink_state)
+            
+            # --- 2. CONTROL SERVO & UPDATE DIRECTION LINE ---
             if steering == "left":
                 set_servo_angle(pin1, 45)  
+                display.set_pixel(0, 0, 9)  # Indicator dot on the far left
             elif steering == "right":
                 set_servo_angle(pin1, 135) 
+                display.set_pixel(4, 0, 9)  # Indicator dot on the far right
             else:
                 set_servo_angle(pin1, 90)  
+                display.set_pixel(2, 0, 9)  # Indicator dot in the dead center
                 
-            # 2. Control the DC Motor Speed (Pin 0)
+            # --- 3. CONTROL DC MOTOR SPEED ---
             pwm_value = int((speed_pct / 100) * 1023)
             pin0.write_analog(pwm_value)
             
         except ValueError:
-            pass
+            pass  # Ignore malformed radio messages
     else:
-        # If no radio message was received in this loop, turn off the indicator
+        # If no radio packet was caught in this specific loop cycle,
+        # clear the center indicator to show a break in communication.
         display.set_pixel(2, 2, 0)
             
     sleep(20)
