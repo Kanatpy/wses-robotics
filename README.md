@@ -43,8 +43,8 @@
     <td width="50%" valign="top">
       <strong>The Python Code</strong>
       <div class="code-container">
-        <button class="copy-btn" onclick="copyCode('code3', this)">Copy</button>
-        <pre><code id="code3">
+        <button class="copy-btn" onclick="copyCode('code1', this)">Copy</button>
+        <pre><code id="code1">
           
 from microbit import *
 import radio
