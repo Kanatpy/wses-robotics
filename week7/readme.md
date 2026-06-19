@@ -33,8 +33,8 @@
 <a href="https://makecode.microbit.org/" target="_blank">Click here if you want to program using Blocks!</a>
 
 # Circuit Diagram
-<a href="https://app.cirkitdesigner.com/project/0213eed6-16af-4f01-b41b-4eb8e486daf5" target="_blank"> Link to cirkidesigner!</a>
-<img src="week6/circuit_image.png" alt="Circuit Diagram" style="width:100%;">
+<a href="https://app.cirkitdesigner.com/project/6b3ac473-1609-4962-a3ae-19ad9dcb6e0a" target="_blank"> Link to cirkidesigner!</a>
+<img src="week7/circuit_image_week7.png" alt="Circuit Diagram" style="width:100%;">
 
 
 # Remote Control!
